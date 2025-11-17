@@ -158,4 +158,104 @@ public class TileService : ITileService
 
         _logger.LogInformation("Rebuild Zooms: Complete!");
     }
+
+    public async Task<int> RebuildIncompleteZoomTilesAsync(string gridStorage, int maxTilesToRebuild)
+    {
+        int rebuiltCount = 0;
+
+        try
+        {
+            // Get all tiles from the database
+            var allTiles = await _tileRepository.GetAllTilesAsync();
+
+            // Process zoom levels 1-6 in order
+            for (int zoom = 1; zoom <= 6 && rebuiltCount < maxTilesToRebuild; zoom++)
+            {
+                // Get all tiles at this zoom level
+                var zoomTiles = allTiles.Where(t => t.Zoom == zoom).ToList();
+
+                foreach (var zoomTile in zoomTiles)
+                {
+                    if (rebuiltCount >= maxTilesToRebuild)
+                        break;
+
+                    // Check if all 4 sub-tiles exist at the previous zoom level
+                    var subTilesExist = new List<TileData>();
+                    bool allSubTilesExist = true;
+                    bool hasNewerSubTiles = false;
+
+                    for (int x = 0; x <= 1; x++)
+                    {
+                        for (int y = 0; y <= 1; y++)
+                        {
+                            var subCoord = new Coord(zoomTile.Coord.X * 2 + x, zoomTile.Coord.Y * 2 + y);
+                            var subTile = await GetTileAsync(zoomTile.MapId, subCoord, zoom - 1);
+
+                            if (subTile == null || string.IsNullOrEmpty(subTile.File))
+                            {
+                                allSubTilesExist = false;
+                                break;
+                            }
+
+                            subTilesExist.Add(subTile);
+
+                            // Check if this sub-tile was created/updated after the zoom tile
+                            if (subTile.Cache > zoomTile.Cache)
+                            {
+                                hasNewerSubTiles = true;
+                            }
+                        }
+
+                        if (!allSubTilesExist)
+                            break;
+                    }
+
+                    // Rebuild if all sub-tiles exist and at least one is newer than the zoom tile
+                    if (allSubTilesExist && hasNewerSubTiles)
+                    {
+                        _logger.LogInformation(
+                            "Rebuilding zoom tile: Map={MapId}, Zoom={Zoom}, Coord={Coord}, TenantId={TenantId}",
+                            zoomTile.MapId, zoom, zoomTile.Coord, zoomTile.TenantId);
+
+                        // Get the old file size for quota adjustment
+                        var oldFilePath = Path.Combine(gridStorage, zoomTile.File);
+                        long oldFileSizeBytes = 0;
+                        if (File.Exists(oldFilePath))
+                        {
+                            oldFileSizeBytes = new FileInfo(oldFilePath).Length;
+                        }
+
+                        // Regenerate the zoom tile
+                        await UpdateZoomLevelAsync(
+                            zoomTile.MapId,
+                            zoomTile.Coord,
+                            zoom,
+                            zoomTile.TenantId,
+                            gridStorage);
+
+                        // Adjust quota: UpdateZoomLevelAsync already increments for the new file,
+                        // so we need to decrement the old file size
+                        if (oldFileSizeBytes > 0)
+                        {
+                            var oldFileSizeMB = oldFileSizeBytes / 1024.0 / 1024.0;
+                            await _quotaService.IncrementStorageUsageAsync(zoomTile.TenantId, -oldFileSizeMB);
+                        }
+
+                        rebuiltCount++;
+                    }
+                }
+            }
+
+            if (rebuiltCount > 0)
+            {
+                _logger.LogInformation("Rebuilt {Count} incomplete zoom tiles", rebuiltCount);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error rebuilding incomplete zoom tiles");
+        }
+
+        return rebuiltCount;
+    }
 }

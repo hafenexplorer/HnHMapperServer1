@@ -144,6 +144,7 @@ builder.Services.AddHostedService<MapCleanupService>();
 builder.Services.AddHostedService<InvitationExpirationService>();
 builder.Services.AddHostedService<TenantStorageVerificationService>(); // Phase 4: Storage quota verification
 builder.Services.AddHostedService<PingCleanupService>(); // Ping cleanup service
+builder.Services.AddHostedService<ZoomTileRebuildService>(); // Zoom tile rebuild service
 
 // Configure shared data protection for cookie sharing with Web
 var dataProtectionPath = Path.Combine(
