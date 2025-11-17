@@ -221,7 +221,14 @@ public class TileService : ITileService
                         for (int y = 0; y <= 1; y++)
                         {
                             var subCoord = new Coord(zoomTile.Coord.X * 2 + x, zoomTile.Coord.Y * 2 + y);
-                            var subTile = await GetTileAsync(zoomTile.MapId, subCoord, zoom - 1);
+
+                            // Search in already-loaded tenantTiles instead of calling repository
+                            // (repository uses global query filter which requires HTTP context)
+                            var subTile = tenantTiles.FirstOrDefault(t =>
+                                t.MapId == zoomTile.MapId &&
+                                t.Zoom == zoom - 1 &&
+                                t.Coord.X == subCoord.X &&
+                                t.Coord.Y == subCoord.Y);
 
                             if (subTile == null || string.IsNullOrEmpty(subTile.File))
                             {
