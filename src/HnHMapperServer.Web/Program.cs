@@ -334,8 +334,10 @@ builder.Services.AddHttpClient("API", client =>
     options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(45);
     // Increase total request timeout (50 minutes to allow for processing)
     options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(50);
-    // Disable retries for file uploads - streams can't be re-read
-    options.Retry.MaxRetryAttempts = 0;
+    // Minimize retries - streams can't be re-read (must be at least 1)
+    options.Retry.MaxRetryAttempts = 1;
+    // Circuit breaker sampling duration must be at least 2x attempt timeout
+    options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(95);
 });
 
 // Add cascading authentication state
