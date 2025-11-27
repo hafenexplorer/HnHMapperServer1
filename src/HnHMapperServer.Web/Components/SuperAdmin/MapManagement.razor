@@ -434,9 +434,9 @@
             content.Add(streamContent, "file", selectedFile.Name);
             content.Add(new StringContent(importMode), "mode");
 
-            // Use the API client with extended timeout
+            // Use the API client with extended timeout (configured in Program.cs)
             var httpClient = HttpClientFactory.CreateClient("API");
-            httpClient.Timeout = TimeSpan.FromMinutes(30);
+            httpClient.Timeout = TimeSpan.FromMinutes(45);
 
             // Send the request with ResponseHeadersRead to enable streaming SSE
             var request = new HttpRequestMessage(HttpMethod.Post, $"/api/tenants/{tenantId}/maps/import")

@@ -317,13 +317,26 @@ builder.Logging.AddConsole().Services.BuildServiceProvider()
 builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
+    // Set a long timeout for large file uploads (.hmap files can be 500MB+)
+    client.Timeout = TimeSpan.FromMinutes(45);
 })
 .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {
     AllowAutoRedirect = false,
     UseCookies = false
 })
-.AddHttpMessageHandler<HnHMapperServer.Web.Services.AuthenticationDelegatingHandler>();
+.AddHttpMessageHandler<HnHMapperServer.Web.Services.AuthenticationDelegatingHandler>()
+// Configure custom resilience options for file uploads
+// The default Aspire StandardResilienceHandler has a 10s attempt timeout which is too short
+.AddStandardResilienceHandler(options =>
+{
+    // Increase attempt timeout for large file uploads (45 minutes)
+    options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(45);
+    // Increase total request timeout (50 minutes to allow for processing)
+    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(50);
+    // Disable retries for file uploads - streams can't be re-read
+    options.Retry.MaxRetryAttempts = 0;
+});
 
 // Add cascading authentication state
 builder.Services.AddCascadingAuthenticationState();
