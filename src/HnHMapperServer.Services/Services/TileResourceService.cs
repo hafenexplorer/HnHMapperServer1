@@ -95,11 +95,39 @@ public class TileResourceService : IDisposable
             _imageCache[resourceName] = img;
             return img;
         }
+        catch (HttpRequestException ex)
+        {
+            // Network error - store error for first failure only
+            if (_firstNetworkError == null)
+            {
+                _firstNetworkError = $"Failed to fetch tile from Haven server: {url}. " +
+                    $"Error: {ex.Message}. " +
+                    "Check if production server can reach https://www.havenandhearth.com";
+            }
+            return null;
+        }
+        catch (TaskCanceledException)
+        {
+            // Timeout
+            if (_firstNetworkError == null)
+            {
+                _firstNetworkError = $"Timeout fetching tile from Haven server: {url}. " +
+                    "The Haven server may be slow or unreachable.";
+            }
+            return null;
+        }
         catch
         {
             return null;
         }
     }
+
+    private string? _firstNetworkError;
+
+    /// <summary>
+    /// Get the first network error that occurred, if any
+    /// </summary>
+    public string? GetFirstNetworkError() => _firstNetworkError;
 
     /// <summary>
     /// Pre-fetch multiple tile resources

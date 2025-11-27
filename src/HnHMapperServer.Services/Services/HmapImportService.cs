@@ -125,6 +125,13 @@ public class HmapImportService : IHmapImportService
 
             await tileResourceService.PrefetchTilesAsync(allResources, fetchProgress);
 
+            // Check for network errors during tile fetching
+            var networkError = tileResourceService.GetFirstNetworkError();
+            if (networkError != null)
+            {
+                _logger.LogWarning("Tile fetch warning: {NetworkError}", networkError);
+            }
+
             // Phase 5: Process each segment
             var segmentIndex = 0;
 
