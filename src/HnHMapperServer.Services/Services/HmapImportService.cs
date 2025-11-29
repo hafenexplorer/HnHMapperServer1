@@ -1336,8 +1336,9 @@ public class HmapImportService : IHmapImportService
         var (tiles, totalMB) = cache.ExtractPendingMetadata();
         if (tiles.Count > 0)
         {
-            // Zoom tiles are freshly generated - skip redundant existence check
-            await _tileRepository.SaveTilesBatchAsync(tiles, skipExistenceCheck: true);
+            // Zoom tiles may overlap with existing tiles from previous imports
+            // (multiple grids share parent zoom tiles) - must check for existing
+            await _tileRepository.SaveTilesBatchAsync(tiles, skipExistenceCheck: false);
             await _quotaService.IncrementStorageUsageAsync(tenantId, totalMB);
 
             _logger.LogInformation("Zoom generation complete for map {MapId}: {TileCount} tiles, {StorageMB:F2} MB",
