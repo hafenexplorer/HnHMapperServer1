@@ -1070,8 +1070,8 @@ public class HmapImportService : IHmapImportService
 
         if (tiles.Count > 0)
         {
-            // Newly generated tiles from imported grids - skip redundant existence check
-            await _tileRepository.SaveTilesBatchAsync(tiles, skipExistenceCheck: true);
+            // Base tiles may have duplicates in edge cases (orphaned tiles, partial failures)
+            await _tileRepository.SaveTilesBatchAsync(tiles, skipExistenceCheck: false);
         }
 
         if (storageMB > 0 && grids.Count > 0)
