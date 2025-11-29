@@ -729,8 +729,11 @@ export function jumpToCharacter(characterId) {
 
 // Marker Management - Delegate to MarkerManager
 export function addMarker(markerData) {
-    console.log('[leaflet-interop] addMarker called, delegating to MarkerManager:', markerData);
     return MarkerManager.addMarker(markerData, mapInstance);
+}
+
+export function addMarkersBatch(markersData) {
+    return MarkerManager.addMarkersBatch(markersData, mapInstance);
 }
 
 export function updateMarker(markerId, markerData) {

@@ -34,7 +34,6 @@ export function setMarkerLayers(mainLayer, detailLayer) {
  * Set the current map ID for marker filtering
  */
 export function setCurrentMapId(mapId) {
-    console.log('[Marker] setCurrentMapId:', mapId, '(was:', currentMapId, ')');
     currentMapId = mapId;
 }
 
@@ -45,33 +44,18 @@ export function setCurrentMapId(mapId) {
  * @returns {boolean} - True if marker was added
  */
 export function addMarker(markerData, mapInstance) {
-    console.log('[Marker] addMarker called:', {
-        id: markerData.id,
-        name: markerData.name,
-        markerMap: markerData.map,
-        currentMapId: currentMapId,
-        willAdd: markerData.map === currentMapId && !markers[markerData.id] && !markerData.hidden,
-        exists: !!markers[markerData.id],
-        hidden: markerData.hidden
-    });
-
     // Only show markers on their own map
     if (markerData.map !== currentMapId) {
-        console.warn('[Marker] Skipping marker - wrong map:', markerData.map, 'vs current:', currentMapId);
         return false;
     }
 
     if (markers[markerData.id]) {
-        console.warn('[Marker] Skipping marker - already exists:', markerData.id);
         return false;
     }
 
     if (markerData.hidden) {
-        console.warn('[Marker] Skipping marker - hidden:', markerData.id);
         return false;
     }
-
-    console.log('[Marker] Adding marker to map:', markerData.id, markerData.name);
 
     const iconUrl = `${markerData.image}.png`;
     const isCustom = markerData.image === "gfx/terobjs/mm/custom";
@@ -143,6 +127,27 @@ export function addMarker(markerData, mapInstance) {
     };
 
     return true;
+}
+
+/**
+ * Add multiple markers to the map in a single batch (performance optimization)
+ * @param {Array} markersData - Array of marker data objects
+ * @param {object} mapInstance - Leaflet map instance
+ * @returns {object} - Result with counts: { added, skipped }
+ */
+export function addMarkersBatch(markersData, mapInstance) {
+    let added = 0;
+    let skipped = 0;
+
+    for (const markerData of markersData) {
+        if (addMarker(markerData, mapInstance)) {
+            added++;
+        } else {
+            skipped++;
+        }
+    }
+
+    return { added, skipped };
 }
 
 /**

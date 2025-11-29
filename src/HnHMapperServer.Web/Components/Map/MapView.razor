@@ -151,17 +151,16 @@
 
     public async Task AddMarkerAsync(MarkerModel marker)
     {
-        Console.WriteLine($"[MapView] AddMarkerAsync - initialized={initialized}, jsModule={(jsModule != null ? "not null" : "null")}, disposed={disposed}");
+        if (!initialized || jsModule == null || disposed) return;
 
-        if (!initialized || jsModule == null || disposed)
-        {
-            Console.WriteLine($"[MapView] AddMarkerAsync SKIPPED - precondition failed for marker {marker.Id} ({marker.Name})");
-            return;
-        }
+        await SafeJs.InvokeVoidSafeAsync(jsModule, "addMarker", marker);
+    }
 
-        Console.WriteLine($"[MapView] AddMarkerAsync - Calling SafeJs for marker {marker.Id} ({marker.Name}), Map={marker.Map}, Hidden={marker.Hidden}, Pos=({marker.Position.X},{marker.Position.Y})");
-        var result = await SafeJs.InvokeVoidSafeAsync(jsModule, "addMarker", marker);
-        Console.WriteLine($"[MapView] AddMarkerAsync - SafeJs returned {result} for marker {marker.Id}");
+    public async Task AddMarkersAsync(IEnumerable<MarkerModel> markers)
+    {
+        if (!initialized || jsModule == null || disposed) return;
+
+        await SafeJs.InvokeVoidSafeAsync(jsModule, "addMarkersBatch", markers);
     }
 
     public async Task UpdateMarkerAsync(MarkerModel marker)

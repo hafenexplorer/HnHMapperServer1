@@ -418,10 +418,8 @@ public partial class Map : IAsyncDisposable, IBrowserViewportObserver
             // Enrich markers with timer data before adding to map
             EnrichMarkersWithTimerData(markersToLoad);
 
-            foreach (var marker in markersToLoad)
-            {
-                await mapView.AddMarkerAsync(marker);
-            }
+            // Batch add all markers in a single JS interop call for performance
+            await mapView.AddMarkersAsync(markersToLoad);
 
             // Load custom markers
             await TryRenderPendingCustomMarkersAsync();
@@ -523,9 +521,10 @@ public partial class Map : IAsyncDisposable, IBrowserViewportObserver
                 // Update map view
                 if (mapView != null)
                 {
-                    foreach (var marker in result.AddedMarkers)
+                    // Batch add new markers for performance
+                    if (result.AddedMarkers.Count > 0)
                     {
-                        await mapView.AddMarkerAsync(marker);
+                        await mapView.AddMarkersAsync(result.AddedMarkers);
                     }
 
                     foreach (var marker in result.UpdatedMarkers)
@@ -1630,10 +1629,8 @@ public partial class Map : IAsyncDisposable, IBrowserViewportObserver
         var markers = MarkerState.GetMarkersForMap(MapNavigation.CurrentMapId).ToList();
         EnrichMarkersWithTimerData(markers);
 
-        foreach (var marker in markers)
-        {
-            await mapView.AddMarkerAsync(marker);
-        }
+        // Batch add all markers in a single JS interop call for performance
+        await mapView.AddMarkersAsync(markers);
     }
 
     /// <summary>
