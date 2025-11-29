@@ -176,8 +176,17 @@ public class MarkerRepository : IMarkerRepository
 
         var currentTenantId = _tenantContext.GetRequiredTenantId();
 
-        // Get all keys we're trying to insert
-        var keysToInsert = markers.Select(m => m.key).ToList();
+        // Clear change tracker to avoid stale entities from previous operations
+        _context.ChangeTracker.Clear();
+
+        // Deduplicate the batch by key (take first marker for each key)
+        var uniqueMarkers = markers
+            .GroupBy(m => m.key)
+            .Select(g => g.First())
+            .ToList();
+
+        // Get all unique keys we're trying to insert
+        var keysToInsert = uniqueMarkers.Select(m => m.key).ToList();
 
         // Query existing keys in one batch (much faster than individual queries)
         var existingKeys = await _context.Markers
@@ -186,8 +195,8 @@ public class MarkerRepository : IMarkerRepository
             .Select(m => m.Key)
             .ToHashSetAsync();
 
-        // Filter to only new markers
-        var newMarkers = markers
+        // Filter to only new markers (not in DB)
+        var newMarkers = uniqueMarkers
             .Where(m => !existingKeys.Contains(m.key))
             .Select(m => MapFromDomain(m.marker, m.key))
             .ToList();
@@ -202,8 +211,51 @@ public class MarkerRepository : IMarkerRepository
         }
 
         // Bulk insert all new markers in one transaction
-        _context.Markers.AddRange(newMarkers);
-        await _context.SaveChangesAsync();
+        // Use retry logic to handle race conditions
+        const int maxRetries = 3;
+        var delay = TimeSpan.FromMilliseconds(100);
+
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                _context.Markers.AddRange(newMarkers);
+                await _context.SaveChangesAsync();
+                return newMarkers.Count;
+            }
+            catch (DbUpdateException ex) when (
+                ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true &&
+                attempt < maxRetries)
+            {
+                // Race condition: another request inserted some markers
+                // Clear tracker and retry with re-filtered list
+                _context.ChangeTracker.Clear();
+
+                // Re-query existing keys
+                existingKeys = await _context.Markers
+                    .AsNoTracking()
+                    .Where(m => m.TenantId == currentTenantId && keysToInsert.Contains(m.Key))
+                    .Select(m => m.Key)
+                    .ToHashSetAsync();
+
+                // Re-filter markers
+                newMarkers = uniqueMarkers
+                    .Where(m => !existingKeys.Contains(m.key))
+                    .Select(m => MapFromDomain(m.marker, m.key))
+                    .ToList();
+
+                if (newMarkers.Count == 0)
+                    return 0;
+
+                foreach (var entity in newMarkers)
+                {
+                    entity.Id = 0;
+                }
+
+                await Task.Delay(delay);
+                delay *= 2;
+            }
+        }
 
         return newMarkers.Count;
     }
