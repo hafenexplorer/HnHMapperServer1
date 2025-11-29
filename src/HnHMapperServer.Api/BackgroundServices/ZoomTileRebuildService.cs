@@ -33,7 +33,12 @@ public class ZoomTileRebuildService : BackgroundService
             return;
         }
 
-        var intervalMinutes = _configuration.GetValue<int>("ZoomRebuild:IntervalMinutes", 5);
+        // Delay 1 hour after startup to let system stabilize before heavy tile processing
+        var startupDelayHours = _configuration.GetValue<double>("ZoomRebuild:StartupDelayHours", 1.0);
+        _logger.LogInformation("Zoom Tile Rebuild Service starting in {Delay:F1} hour(s)", startupDelayHours);
+        await Task.Delay(TimeSpan.FromHours(startupDelayHours), stoppingToken);
+
+        var intervalMinutes = _configuration.GetValue<int>("ZoomRebuild:IntervalMinutes", 120);
         var maxTilesPerRun = _configuration.GetValue<int>("ZoomRebuild:MaxTilesPerRun", 500);
         var gridStorage = _configuration.GetValue<string>("GridStorage") ?? "map";
 

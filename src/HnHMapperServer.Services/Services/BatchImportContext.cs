@@ -6,7 +6,7 @@ namespace HnHMapperServer.Services.Services;
 /// Tracks grids and tiles for batch database operations during import.
 /// Accumulates items until batch size is reached, then provides them for bulk save.
 /// </summary>
-public class BatchImportContext
+public class BatchImportContext : IDisposable
 {
     private readonly List<GridData> _gridBatch = new();
     private readonly List<TileData> _tileBatch = new();
@@ -83,5 +83,17 @@ public class BatchImportContext
         _gridBatch.Clear();
         _tileBatch.Clear();
         _accumulatedStorageMB = 0;
+    }
+
+    private bool _disposed;
+
+    /// <summary>
+    /// Disposes the context, clearing all accumulated data.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        Reset();
     }
 }

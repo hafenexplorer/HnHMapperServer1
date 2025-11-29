@@ -324,7 +324,8 @@ public partial class Map : IAsyncDisposable, IBrowserViewportObserver
                 // Mark circuit as fully ready for JS->NET calls
                 circuitFullyReady = true;
 
-                await InitializeBrowserSseAsync();
+                // NOTE: SSE initialization moved to HandleMapInitialized
+                // because mapView component reference is not available until Leaflet fires its 'load' event
             }
 
             // NOTE: All initialization logic has been moved to event-driven handlers:
@@ -705,6 +706,12 @@ public partial class Map : IAsyncDisposable, IBrowserViewportObserver
             // Sync character tooltip visibility with LayerVisibilityService default state
             await mapView.ToggleCharacterTooltipsAsync(LayerVisibility.ShouldShowCharacterTooltips());
         }
+
+        // Initialize SSE after map is ready - this is the correct place because:
+        // 1. mapView component reference is now guaranteed to be available
+        // 2. Leaflet 'load' event has fired, so all JS interop is ready
+        // 3. circuitFullyReady should already be true from OnAfterRenderAsync
+        await InitializeBrowserSseAsync();
     }
 
     private Task HandleMapChanged(int mapId)

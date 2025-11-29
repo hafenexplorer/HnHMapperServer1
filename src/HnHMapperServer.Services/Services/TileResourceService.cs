@@ -94,7 +94,7 @@ public class TileResourceService : IDisposable
         var url = BASE_URL + resourceName;
         try
         {
-            var response = await _httpClient.GetAsync(url);
+            using var response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
                 return null;

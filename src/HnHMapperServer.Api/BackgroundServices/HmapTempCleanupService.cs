@@ -24,6 +24,11 @@ public class HmapTempCleanupService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // Randomized startup delay to prevent all services starting simultaneously
+        var startupDelay = TimeSpan.FromSeconds(Random.Shared.Next(0, 60));
+        _logger.LogInformation("HMAP Temp Cleanup Service starting in {Delay:F1}s", startupDelay.TotalSeconds);
+        await Task.Delay(startupDelay, stoppingToken);
+
         var retentionDays = _configuration.GetValue<int>("Cleanup:HmapTempRetentionDays", DefaultRetentionDays);
         var cleanupIntervalHours = _configuration.GetValue<int>("Cleanup:HmapTempCleanupIntervalHours", DefaultCleanupIntervalHours);
 

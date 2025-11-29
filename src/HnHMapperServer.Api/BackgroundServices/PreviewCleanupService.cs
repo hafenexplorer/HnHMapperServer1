@@ -23,6 +23,11 @@ public class PreviewCleanupService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // Randomized startup delay to prevent all services starting simultaneously
+        var startupDelay = TimeSpan.FromSeconds(Random.Shared.Next(0, 60));
+        _logger.LogInformation("Preview Cleanup Service starting in {Delay:F1}s", startupDelay.TotalSeconds);
+        await Task.Delay(startupDelay, stoppingToken);
+
         _logger.LogInformation("Preview Cleanup Service started (runs every 6 hours)");
 
         // Run immediately on startup, then every 6 hours

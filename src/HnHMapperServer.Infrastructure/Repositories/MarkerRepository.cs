@@ -97,12 +97,40 @@ public class MarkerRepository : IMarkerRepository
             var entity = MapFromDomain(marker, key);
             entity.Id = 0;  // Let database auto-generate ID (AUTOINCREMENT)
             _context.Markers.Add(entity);
-            await _context.SaveChangesAsync();
 
-            // Update the domain object with the generated ID
-            if (marker.Id == 0)
+            try
             {
-                marker.Id = entity.Id;
+                await _context.SaveChangesAsync();
+
+                // Update the domain object with the generated ID
+                if (marker.Id == 0)
+                {
+                    marker.Id = entity.Id;
+                }
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
+            {
+                // Race condition: another request inserted this marker between our check and insert
+                // Detach the failed entity and retry as update
+                _context.Entry(entity).State = EntityState.Detached;
+
+                // Re-fetch the existing marker that was inserted by the other request
+                existing = await _context.Markers
+                    .FirstOrDefaultAsync(m => m.Key == key && m.TenantId == currentTenantId);
+
+                if (existing != null)
+                {
+                    // Update the existing marker
+                    var updateEntity = MapFromDomain(marker, key);
+                    updateEntity.Id = existing.Id;
+                    _context.Entry(existing).CurrentValues.SetValues(updateEntity);
+                    await _context.SaveChangesAsync();
+
+                    if (marker.Id == 0)
+                    {
+                        marker.Id = updateEntity.Id;
+                    }
+                }
             }
         }
     }
@@ -139,6 +167,45 @@ public class MarkerRepository : IMarkerRepository
             .MaxAsync(m => (int?)m.Id);
 
         return (maxId ?? 0) + 1;
+    }
+
+    public async Task<int> SaveMarkersBatchAsync(List<(Marker marker, string key)> markers)
+    {
+        if (markers.Count == 0)
+            return 0;
+
+        var currentTenantId = _tenantContext.GetRequiredTenantId();
+
+        // Get all keys we're trying to insert
+        var keysToInsert = markers.Select(m => m.key).ToList();
+
+        // Query existing keys in one batch (much faster than individual queries)
+        var existingKeys = await _context.Markers
+            .AsNoTracking()
+            .Where(m => m.TenantId == currentTenantId && keysToInsert.Contains(m.Key))
+            .Select(m => m.Key)
+            .ToHashSetAsync();
+
+        // Filter to only new markers
+        var newMarkers = markers
+            .Where(m => !existingKeys.Contains(m.key))
+            .Select(m => MapFromDomain(m.marker, m.key))
+            .ToList();
+
+        if (newMarkers.Count == 0)
+            return 0;
+
+        // Reset IDs to let database auto-generate
+        foreach (var entity in newMarkers)
+        {
+            entity.Id = 0;
+        }
+
+        // Bulk insert all new markers in one transaction
+        _context.Markers.AddRange(newMarkers);
+        await _context.SaveChangesAsync();
+
+        return newMarkers.Count;
     }
 
     private static Marker MapToDomain(MarkerEntity entity) => new Marker

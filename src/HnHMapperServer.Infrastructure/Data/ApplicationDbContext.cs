@@ -121,6 +121,11 @@ public sealed class ApplicationDbContext : IdentityDbContext<IdentityUser, Ident
             entity.HasIndex(e => new { e.MapId, e.Zoom, e.CoordX, e.CoordY }).IsUnique();
             entity.HasIndex(e => e.TenantId);
 
+            // Optimized indexes for ZoomTileRebuildService queries
+            // Supports FindMissingZoomTilesAsync and FindStaleZoomTilesAsync
+            entity.HasIndex(e => new { e.TenantId, e.Zoom });
+            entity.HasIndex(e => new { e.TenantId, e.MapId, e.Zoom });
+
             // Foreign key to Tenants
             entity.HasOne<TenantEntity>()
                 .WithMany()

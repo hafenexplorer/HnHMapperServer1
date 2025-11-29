@@ -3,6 +3,22 @@
 @using HnHMapperServer.Core.DTOs
 @using MudBlazor
 
+<style>
+    .marker-groups .mud-expand-panel {
+        margin-bottom: 4px;
+    }
+    .marker-groups .mud-expand-panel-header {
+        padding: 8px 12px;
+        min-height: 40px;
+    }
+    .marker-groups .mud-expand-panel-content {
+        padding: 0 8px 8px 8px;
+    }
+    .marker-groups .mud-expansion-panel-content > .mud-collapse-container {
+        padding: 0;
+    }
+</style>
+
 <!-- Markers panel with filter and list -->
 <MudTextField @bind-Value="markerFilter"
               Placeholder="Filter markers..."
@@ -79,7 +95,7 @@
     <MudDivider Class="my-3" />
 }
 
-<!-- Regular Markers Section -->
+<!-- Regular Markers Section - Grouped by Type -->
 @if (FilteredMarkers.Any())
 {
     @if (CustomMarkers.Any())
@@ -89,41 +105,56 @@
             Resource Markers
         </MudText>
     }
-    <MudText Typo="Typo.caption" Class="mb-2">@FilteredMarkers.Count() marker(s)</MudText>
-    <MudList T="string" Dense="true" Clickable="true">
-        @foreach (var marker in FilteredMarkers)
+    <MudText Typo="Typo.caption" Class="mb-2">@FilteredMarkers.Count() marker(s) in @GroupedMarkers.Count() type(s)</MudText>
+
+    <MudExpansionPanels MultiExpansion="true" Dense="true" Elevation="0" Class="marker-groups">
+        @foreach (var group in GroupedMarkers)
         {
-            var markerTimer = GetTimerForMarker(marker.Id);
-            <MudListItem T="string" OnClick="@(() => OnMarkerSelected.InvokeAsync(marker))">
-                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
-                    <MudStack Row="false" Spacing="0" Style="flex: 1; min-width: 0;">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
-                            <img src="@GetMarkerIconSrc(marker.Image)"
-                                 alt="icon"
-                                 style="width: 20px; height: 20px; object-fit: contain;"
-                                 onerror="this.onerror=null;this.src='/gfx/terobjs/mm/custom.png';" />
-                            <MudText Typo="Typo.body2">@marker.Name</MudText>
-                        </MudStack>
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">
-                            @GetMapName(marker.Map) • @marker.Position.X, @marker.Position.Y
-                        </MudText>
+            <MudExpansionPanel @key="group.Key" IsInitiallyExpanded="@(GroupedMarkers.Count() <= 3 || group.Count() <= 5)">
+                <TitleContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <img src="@GetMarkerIconSrc(group.Key)"
+                             alt="icon"
+                             style="width: 18px; height: 18px; object-fit: contain;"
+                             onerror="this.onerror=null;this.src='/gfx/terobjs/mm/custom.png';" />
+                        <MudText Typo="Typo.body2">@GetIconDisplayName(group.Key)</MudText>
+                        <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Text">@group.Count()</MudChip>
                     </MudStack>
-                    @if (markerTimer != null)
-                    {
-                        <TimerBadge Timer="@markerTimer" />
-                    }
-                    else
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Timer"
-                                       Size="Size.Small"
-                                       Color="Color.Default"
-                                       OnClick="@(() => OnSetTimerForMarker.InvokeAsync(marker))"
-                                       Title="Set timer" />
-                    }
-                </MudStack>
-            </MudListItem>
+                </TitleContent>
+                <ChildContent>
+                    <MudList T="string" Dense="true" Clickable="true" Class="py-0">
+                        @foreach (var marker in group.OrderBy(m => m.Name))
+                        {
+                            var markerTimer = GetTimerForMarker(marker.Id);
+                            <MudListItem T="string" OnClick="@(() => OnMarkerSelected.InvokeAsync(marker))" Class="py-1">
+                                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%;">
+                                    <MudStack Row="false" Spacing="0" Style="flex: 1; min-width: 0;">
+                                        <MudText Typo="Typo.body2">@marker.Name</MudText>
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                            @GetMapName(marker.Map) • @marker.Position.X, @marker.Position.Y
+                                        </MudText>
+                                    </MudStack>
+                                    @if (markerTimer != null)
+                                    {
+                                        <TimerBadge Timer="@markerTimer" />
+                                    }
+                                    else
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Timer"
+                                                       Size="Size.Small"
+                                                       Color="Color.Default"
+                                                       OnClick="@(() => OnSetTimerForMarker.InvokeAsync(marker))"
+                                                       OnClickStopPropagation="true"
+                                                       Title="Set timer" />
+                                    }
+                                </MudStack>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </ChildContent>
+            </MudExpansionPanel>
         }
-    </MudList>
+    </MudExpansionPanels>
 }
 else if (!CustomMarkers.Any())
 {
@@ -197,6 +228,15 @@ else if (!CustomMarkers.Any())
                        (string.IsNullOrWhiteSpace(markerFilter) ||
                         m.Name.Contains(markerFilter, StringComparison.OrdinalIgnoreCase)))
             .OrderBy(m => m.Name);
+
+    /// <summary>
+    /// Markers grouped by icon/image, sorted by count (largest groups first)
+    /// </summary>
+    private IEnumerable<IGrouping<string, MarkerModel>> GroupedMarkers =>
+        FilteredMarkers
+            .GroupBy(m => m.Image)
+            .OrderByDescending(g => g.Count())
+            .ThenBy(g => g.Key);
     
     /// <summary>
     /// Filtered list of custom markers (excludes hidden, sorted by newest)
@@ -267,6 +307,25 @@ else if (!CustomMarkers.Any())
             t.Type == "CustomMarker" &&
             t.CustomMarkerId == customMarkerId &&
             !t.IsCompleted);
+    }
+
+    /// <summary>
+    /// Extract display name from icon path (e.g., "gfx/terobjs/mm/thingwall" -> "Thingwall")
+    /// </summary>
+    private static string GetIconDisplayName(string imagePath)
+    {
+        if (string.IsNullOrWhiteSpace(imagePath))
+            return "Unknown";
+
+        // Get the last part of the path
+        var lastSlash = imagePath.LastIndexOf('/');
+        var name = lastSlash >= 0 ? imagePath.Substring(lastSlash + 1) : imagePath;
+
+        // Capitalize first letter
+        if (name.Length > 0)
+            return char.ToUpperInvariant(name[0]) + name.Substring(1);
+
+        return name;
     }
 }
 
