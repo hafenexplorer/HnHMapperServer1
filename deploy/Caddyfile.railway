@@ -1,0 +1,11 @@
+{
+    auto_https off
+}
+
+:80 {
+    reverse_proxy /client/* localhost:8081
+    reverse_proxy /map/api/* localhost:8081
+    reverse_proxy /map/grids/* localhost:8081
+    reverse_proxy /map/updates localhost:8081
+    reverse_proxy /* localhost:8082
+}
