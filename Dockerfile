@@ -28,8 +28,7 @@ COPY tests/ ./tests/
 COPY . ./
 
 # Build and publish
-WORKDIR /app/src/HnHMapServer.Api
-RUN dotnet publish src/HnHMapServer.Api/HnHMapperServer.Api.csproj -c Release -o /app/publish
+RUN dotnet publish src/HnHMapperServer.Api/HnHMapperServer.Api.csproj -c Release -o /app/publish --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
