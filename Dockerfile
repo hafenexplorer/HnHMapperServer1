@@ -1,5 +1,4 @@
 # Combined Dockerfile for Railway
-
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
 # Build API
@@ -98,4 +97,5 @@ EXPOSE 8080
 EXPOSE 5001
 
 CMD ["/app/start.sh"]
+
 
