@@ -26,9 +26,6 @@ WORKDIR /app
 # Copy published application
 COPY --from=build /app/publish .
 
-# Create volume for map data
-VOLUME ["/map"]
-
 # Expose port
 EXPOSE 8080
 
