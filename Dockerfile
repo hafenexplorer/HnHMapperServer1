@@ -1,48 +1,52 @@
-# Build stage
-# Use the desired .NET SDK version for building
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build 
+# Combined Dockerfile for Railway
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+# Build API
+WORKDIR /src
+COPY ["src/HnHMapperServer.Api/HnHMapperServer.Api.csproj", "src/HnHMapperServer.Api/"]
+RUN dotnet restore "src/HnHMapperServer.Api/HnHMapperServer.Api.csproj"
+
+# Build Web
+COPY ["src/HnHMapperServer.Web/HnHMapperServer.Web.csproj", "src/HnHMapperServer.Web/"]
+RUN dotnet restore "src/HnHMapperServer.Web/HnHMapperServer.Web.csproj"
+
+COPY . .
+WORKDIR "/src/src/HnHMapperServer.Api"
+RUN dotnet build "HnHMapperServer.Api.csproj" -c Release -o /app/api
+
+WORKDIR "/src/src/HnHMapperServer.Web"
+RUN dotnet build "HnHMapperServer.Web.csproj" -c Release -o /app/web
+
+# Publish both
+FROM build AS publish-api
+WORKDIR "/src/src/HnHMapperServer.Api"
+RUN dotnet publish "HnHMapperServer.Api.csproj" -c Release -o /app/api/publish
+
+FROM build AS publish-web
+WORKDIR "/src/src/HnHMapperServer.Web"
+RUN dotnet publish "HnHMapperServer.Web.csproj" -c Release -o /app/web/publish
+
+# Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Copy solution 
-COPY HnHMapperServer.sln ./
+# Copy both services
+COPY --from=publish-api /app/api/publish /app/api
+COPY --from=publish-web /app/web/publish /app/web
 
-# Copy all project files - this ensures they're available for restore
-# Copy src projects
-COPY src/HnHMapperServer.Core/HnHMapperServer.Core.csproj src/HnHMapperServer.Core/
-COPY src/HnHMapperServer.Infrastructure/HnHMapperServer.Infrastructure.csproj src/HnHMapperServer.Infrastructure/
-COPY src/HnHMapperServer.Services/HnHMapperServer.Services.csproj src/HnHMapperServer.Services/
-COPY src/HnHMapperServer.Api/HnHMapperServer.Api.csproj src/HnHMapperServer.Api/
-COPY src/HnHMapperServer.Web/HnHMapperServer.Web.csproj src/HnHMapperServer.Web/
-COPY src/HnHMapperServer.AppHost/HnHMapperServer.AppHost.csproj src/HnHMapperServer.AppHost/
-COPY src/HnHMapperServer.ServiceDefaults/HnHMapperServer.ServiceDefaults.csproj src/HnHMapperServer.ServiceDefaults/
+# Install Caddy for reverse proxy
+RUN apt-get update && apt-get install -y curl && \
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg && \
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list && \
+    apt-get update && apt-get install -y caddy
 
-# Copy test project
-COPY tests/HnHMapperServer.Tests/HnHMapperServer.Tests.csproj tests/HnHMapperServer.Tests/
+# Copy startup script
+COPY deploy/railway-start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
-# Restore dependencies (this will work now because all project files exist)
-RUN dotnet restore
+# Copy Caddyfile
+COPY deploy/Caddyfile.railway /etc/caddy/Caddyfile
 
-# Copy the rest of the source code
-COPY src/ ./src/
-COPY tests/ ./tests/
-COPY . ./
+EXPOSE 80
 
-# Build and publish
-RUN dotnet publish src/HnHMapperServer.Api/HnHMapperServer.Api.csproj -c Release -o /app/publish --no-restore
-
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
-WORKDIR /app
-
-# Copy published application
-COPY --from=build /app/publish .
-
-# Expose port
-EXPOSE 8080
-
-# Set environment variables
-ENV ASPNETCORE_URLS=http://+:8080
-ENV GridStorage=/map
-
-# Run the application
-ENTRYPOINT ["dotnet", "HnHMapperServer.Api.dll"]
+CMD ["/app/start.sh"]
