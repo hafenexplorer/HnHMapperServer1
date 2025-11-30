@@ -3,21 +3,32 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build 
 WORKDIR /app
 
-# Copy solution and project files
+# Copy solution 
 COPY HnHMapperServer.sln ./
-COPY src/HnHMapperServer.Core/HnHMapperServer.Core.csproj ./src/HnHMapperServer.Core/
-COPY src/HnHMapperServer.Infrastructure/HnHMapperServer.Infrastructure.csproj ./src/HnHMapperServer.Infrastructure/
-COPY src/HnHMapperServer.Services/HnHMapperServer.Services.csproj ./src/HnHMapperServer.Services/
-COPY src/HnHMapperServer.Api/HnHMapperServer.Api.csproj ./src/HnHMapperServer.Api/
 
-# Restore dependencies
-RUN dotnet restore
+# Copy all project files - this ensures they're available for restore
+# Copy src projects
+COPY src/HnHMapperServer.Core/HnHMapperServer.Core.csproj src/HnHMapperServer.Core/
+COPY src/HnHMapperServer.Infrastructure/HnHMapperServer.Infrastructure.csproj src/HnHMapperServer.Infrastructure/
+COPY src/HnHMapperServer.Services/HnHMapperServer.Services.csproj src/HnHMapperServer.Services/
+COPY src/HnHMapperServer.Api/HnHMapperServer.Api.csproj src/HnHMapperServer.Api/
+COPY src/HnHMapperServer.Web/HnHMapperServer.Web.csproj src/HnHMapperServer.Web/
+COPY src/HnHMapperServer.AppHost/HnHMapperServer.AppHost.csproj src/HnHMapperServer.AppHost/
+COPY src/HnHMapperServer.ServiceDefaults/HnHMapperServer.ServiceDefaults.csproj src/HnHMapperServer.ServiceDefaults/
 
-# Copy source code
-COPY . .
+# Copy test project
+COPY tests/HnHMapperServer.Tests/HnHMapperServer.Tests.csproj tests/HnHMapperServer.Tests/
+
+# Restore dependencies (this will work now because all project files exist)
+RUN dotnet restore HnHMapperServer.sln
+
+# Copy the rest of the source code
+COPY src/ ./src/
+COPY tests/ ./tests/
+COPY . ./
 
 # Build and publish
-RUN dotnet build -c Release --no-restore
+RUN dotnet build HnHMapperServer.sln -c Release --no-restore
 RUN dotnet publish src/HnHMapperServer.Api/HnHMapperServer.Api.csproj -c Release -o /app/publish --no-restore
 
 # Runtime stage
