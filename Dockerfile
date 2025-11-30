@@ -16,15 +16,11 @@ COPY src/HnHMapperServer.Web/HnHMapperServer.Web.csproj src/HnHMapperServer.Web/
 COPY src/HnHMapperServer.AppHost/HnHMapperServer.AppHost.csproj src/HnHMapperServer.AppHost/
 COPY src/HnHMapperServer.ServiceDefaults/HnHMapperServer.ServiceDefaults.csproj src/HnHMapperServer.ServiceDefaults/
 
-# Copy test project
-COPY tests/HnHMapperServer.Tests/HnHMapperServer.Tests.csproj tests/HnHMapperServer.Tests/
-
 # Restore dependencies (this will work now because all project files exist)
-RUN dotnet restore HnHMapperServer.sln
+RUN dotnet restore 
 
 # Copy the rest of the source code
 COPY src/ ./src/
-COPY tests/ ./tests/
 COPY . ./
 
 # Build and publish
