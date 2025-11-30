@@ -1,7 +1,7 @@
 # Build stage
 # Use the desired .NET SDK version for building
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build 
-WORKDIR /src
+WORKDIR /app
 
 # Copy solution and project files
 COPY HnHMapperServer.sln ./
@@ -14,14 +14,14 @@ COPY src/HnHMapperServer.Api/HnHMapperServer.Api.csproj ./src/HnHMapperServer.Ap
 RUN dotnet restore
 
 # Copy source code
-COPY src/ ./src/
+COPY . .
 
 # Build and publish
-WORKDIR /src/src/HnHMapperServer.Api
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet build -c Release --no-restore
+RUN dotnet publish src/HnHMapperServer.Api/HnHMapperServer.Api.csproj -c Release -o /app/publish --no-restore
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
 # Copy published application
