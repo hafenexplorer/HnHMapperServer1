@@ -34,11 +34,15 @@ WORKDIR /app
 COPY --from=publish-api /app/api/publish /app/api
 COPY --from=publish-web /app/web/publish /app/web
 
-# Install Caddy for reverse proxy
-RUN apt-get update && apt-get install -y curl && \
+# Install Caddy (FIXED: install gpg first)
+RUN apt-get update && \
+    apt-get install -y curl gpg && \
     curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg && \
     curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list && \
-    apt-get update && apt-get install -y caddy
+    apt-get update && \
+    apt-get install -y caddy && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy startup script
 COPY deploy/railway-start.sh /app/start.sh
