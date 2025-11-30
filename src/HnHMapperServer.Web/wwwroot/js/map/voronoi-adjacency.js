@@ -14,18 +14,18 @@ let highlightedMarkerIds = new Set();
 let mapInstanceRef = null;
 let isFeatureEnabled = false;
 
-// Visual styles for each connection level (fading out progressively)
+// Visual styles for each connection level - bright distinct colors
 const LEVEL_STYLES = [
-    { color: '#00cffd', weight: 2, opacity: 0.8, dashArray: '8, 4' },     // Level 1: Cyan
-    { color: '#4169E1', weight: 1.5, opacity: 0.5, dashArray: '6, 4' },   // Level 2: Blue
-    { color: '#888888', weight: 1, opacity: 0.3, dashArray: '4, 4' }      // Level 3: Gray
+    { color: '#00cffd', weight: 2.5, opacity: 0.9, dashArray: '8, 4' },   // Level 1: Cyan
+    { color: '#ff44ff', weight: 2, opacity: 0.85, dashArray: '6, 4' },    // Level 2: Magenta/Pink
+    { color: '#44ff44', weight: 1.5, opacity: 0.8, dashArray: '5, 4' }    // Level 3: Lime Green
 ];
 
-// Uncertain styles (even more faded) for each level
+// Uncertain styles (faded versions) for each level - same colors but dimmer
 const UNCERTAIN_LEVEL_STYLES = [
-    { color: '#ff9800', weight: 1.5, opacity: 0.4, dashArray: '4, 8' },   // Level 1: Orange
-    { color: '#9370DB', weight: 1, opacity: 0.25, dashArray: '4, 6' },    // Level 2: Purple-ish
-    { color: '#666666', weight: 0.5, opacity: 0.15, dashArray: '3, 5' }   // Level 3: Dark gray
+    { color: '#ff9800', weight: 1.5, opacity: 0.5, dashArray: '4, 8' },   // Level 1: Orange (different color)
+    { color: '#ff44ff', weight: 1.5, opacity: 0.35, dashArray: '4, 6' },  // Level 2: Faded Magenta
+    { color: '#44ff44', weight: 1, opacity: 0.3, dashArray: '4, 5' }      // Level 3: Faded Lime
 ];
 
 // Threshold multiplier: if distance > median * this, mark as uncertain
