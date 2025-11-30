@@ -29,7 +29,7 @@ COPY . ./
 
 # Build and publish
 WORKDIR /app/src/HnHMapServer.Api
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish HnHMapperServer.Api.csproj -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
