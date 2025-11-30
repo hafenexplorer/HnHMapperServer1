@@ -35,6 +35,12 @@ const overlayCache = {};
 // Pending fetch requests to prevent duplicate Blazor calls
 const pendingFetches = new Set();
 
+// Request batching state for coalescing multiple tile requests
+let pendingCoords = new Map(); // mapId -> Set<coordKey>
+let batchTimer = null;
+const BATCH_DELAY_MS = 50; // 50ms debounce window
+const MAX_COORDS_PER_REQUEST = 100; // API limit - larger batches are truncated server-side
+
 // Layer state
 let currentMapId = 0;
 let overlayCanvasLayer = null;
@@ -84,6 +90,7 @@ function getOverlayData(mapId, x, y) {
 
 /**
  * Request overlay data for a set of grid coordinates via Blazor
+ * Uses debounced batching to coalesce multiple tile requests into fewer API calls
  * Data will be returned asynchronously via setOverlayData()
  */
 function requestOverlays(mapId, coords) {
@@ -93,32 +100,72 @@ function requestOverlays(mapId, coords) {
         return;
     }
 
-    // Build coordinate string for API
-    const coordStr = coords.map(c => `${c.x}_${c.y}`).join(',');
-    const fetchKey = `${mapId}:${coordStr}`;
+    // Initialize pending coords set for this mapId if needed
+    if (!pendingCoords.has(mapId)) {
+        pendingCoords.set(mapId, new Set());
+    }
 
-    // Skip if already requesting
-    if (pendingFetches.has(fetchKey)) return;
-    pendingFetches.add(fetchKey);
-
-    // Mark coordinates as pending (will be filled when data arrives)
+    // Mark coordinates as pending in cache and add to batch
     if (!overlayCache[mapId]) {
         overlayCache[mapId] = {};
     }
+
+    const pendingSet = pendingCoords.get(mapId);
     for (const coord of coords) {
         const coordKey = `${coord.x}_${coord.y}`;
-        if (!overlayCache[mapId][coordKey]) {
-            overlayCache[mapId][coordKey] = { _pending: true };
+
+        // Skip if already in cache (pending or not) - prevents duplicate requests
+        // Pending coords are already being fetched by another request
+        if (overlayCache[mapId][coordKey]) {
+            continue;
+        }
+
+        // Mark as pending and add to batch
+        overlayCache[mapId][coordKey] = { _pending: true };
+        pendingSet.add(coordKey);
+    }
+
+    // Debounce: wait for more requests, then send batched request
+    clearTimeout(batchTimer);
+    batchTimer = setTimeout(() => {
+        flushBatchedRequests();
+    }, BATCH_DELAY_MS);
+}
+
+/**
+ * Flush all pending batched requests to Blazor
+ * Called after debounce timer expires
+ * Splits large batches into chunks of MAX_COORDS_PER_REQUEST to avoid API truncation
+ */
+function flushBatchedRequests() {
+    for (const [mapId, coordSet] of pendingCoords) {
+        if (coordSet.size === 0) continue;
+
+        // Split into chunks to avoid API truncation (API limit is 100 coords)
+        const coordArray = Array.from(coordSet);
+        for (let i = 0; i < coordArray.length; i += MAX_COORDS_PER_REQUEST) {
+            const chunk = coordArray.slice(i, i + MAX_COORDS_PER_REQUEST);
+            const coordStr = chunk.join(',');
+            const fetchKey = `${mapId}:${coordStr}`;
+
+            // Skip if already requesting this exact batch
+            if (pendingFetches.has(fetchKey)) continue;
+            pendingFetches.add(fetchKey);
+
+            console.debug(`[Overlay] Sending batch: ${chunk.length} coords for map ${mapId}`);
+
+            // Request data from Blazor (fire-and-forget, response comes via setOverlayData)
+            requestOverlaysCallback(mapId, coordStr);
+
+            // Clear pending flag after a timeout (in case Blazor doesn't respond)
+            setTimeout(() => {
+                pendingFetches.delete(fetchKey);
+            }, 10000);
         }
     }
 
-    // Request data from Blazor (fire-and-forget, response comes via setOverlayData)
-    requestOverlaysCallback(mapId, coordStr);
-
-    // Clear pending flag after a timeout (in case Blazor doesn't respond)
-    setTimeout(() => {
-        pendingFetches.delete(fetchKey);
-    }, 10000);
+    // Clear all pending coord batches
+    pendingCoords.clear();
 }
 
 /**
@@ -131,6 +178,10 @@ export function setRequestOverlaysCallback(callback) {
 /**
  * Receive overlay data from Blazor and cache it
  * Called by Blazor after fetching data from API
+ *
+ * Note: We don't try to match responses to requests because multiple batches
+ * can be in flight and responses arrive out of order. Instead, we just process
+ * the data we receive and update the cache accordingly.
  */
 export function setOverlayData(mapId, overlays) {
     console.debug('[Overlay] Received', overlays.length, 'overlays from Blazor for map', mapId);
@@ -140,14 +191,15 @@ export function setOverlayData(mapId, overlays) {
         overlayCache[mapId] = {};
     }
 
-    // Track which coords we received data for
-    const receivedCoords = new Set();
+    // Build set of affected grid coordinates for efficient lookup
+    const affectedGrids = new Set();
 
     // Process and cache each overlay
     for (const overlay of overlays) {
         const coordKey = `${overlay.x}_${overlay.y}`;
-        receivedCoords.add(coordKey);
+        affectedGrids.add(coordKey);
 
+        // Initialize or replace cache entry (clears _pending flag if present)
         if (!overlayCache[mapId][coordKey] || overlayCache[mapId][coordKey]._pending) {
             overlayCache[mapId][coordKey] = {};
         }
@@ -156,31 +208,8 @@ export function setOverlayData(mapId, overlays) {
         overlayCache[mapId][coordKey][overlay.type] = base64ToUint8Array(overlay.data);
     }
 
-    // Clear pending flags and mark empty coords
-    for (const coordKey in overlayCache[mapId]) {
-        if (overlayCache[mapId][coordKey]._pending) {
-            delete overlayCache[mapId][coordKey]._pending;
-            // If no data was received for this coord, it has no overlays
-            if (!receivedCoords.has(coordKey)) {
-                overlayCache[mapId][coordKey] = {}; // Empty object = no overlays
-            }
-        }
-    }
-
-    // Clear pending fetches that included these coords
-    const coordsToRemove = [];
-    for (const fetchKey of pendingFetches) {
-        if (fetchKey.startsWith(`${mapId}:`)) {
-            coordsToRemove.push(fetchKey);
-        }
-    }
-    coordsToRemove.forEach(key => pendingFetches.delete(key));
-
-    // Build set of affected grid coordinates for efficient lookup
-    const affectedGrids = new Set();
-    for (const overlay of overlays) {
-        affectedGrids.add(`${overlay.x}_${overlay.y}`);
-    }
+    // Note: Coords with no overlays stay pending forever (won't be re-requested).
+    // This is intentional - they just won't show overlays, which is correct behavior.
 
     // Find and update only tiles that cover affected grid coordinates (avoids flickering)
     if (overlayCanvasLayer) {

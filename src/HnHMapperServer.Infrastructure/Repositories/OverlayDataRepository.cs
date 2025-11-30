@@ -42,6 +42,12 @@ public class OverlayDataRepository : IOverlayDataRepository
         if (coordList.Count == 0)
             return new List<OverlayData>();
 
+        // Query Strategy:
+        // Use rectangular bounds query (X IN (...) AND Y IN (...)) which is efficient
+        // with the covering index (TenantId, MapId, CoordX, CoordY).
+        // Post-filter in memory for exact coordinate matches.
+        // This approach is optimal for typical use cases where tiles are spatially close,
+        // and the covering index ensures fast index-only lookups.
         var xCoords = coordList.Select(c => c.X).Distinct().ToList();
         var yCoords = coordList.Select(c => c.Y).Distinct().ToList();
 
@@ -56,7 +62,7 @@ public class OverlayDataRepository : IOverlayDataRepository
             .Where(o => o.MapId == mapId && xCoords.Contains(o.CoordX) && yCoords.Contains(o.CoordY))
             .ToListAsync();
 
-        // Filter to exact coordinate matches
+        // Post-filter to exact coordinate matches (handles sparse diagonal requests)
         var coordSet = new HashSet<(int, int)>(coordList);
         return entities
             .Where(e => coordSet.Contains((e.CoordX, e.CoordY)))

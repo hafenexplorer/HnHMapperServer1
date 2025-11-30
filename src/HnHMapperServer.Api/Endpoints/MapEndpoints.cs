@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using HnHMapperServer.Core.Extensions;
 using HnHMapperServer.Core.Constants;
 
@@ -124,12 +125,14 @@ public static class MapEndpoints
     ///   mapId: The map ID
     ///   coords: Comma-separated list of x_y coordinates (e.g., "10_20,11_20,12_20")
     /// Returns array of overlay data with base64-encoded bitpacked data.
+    /// Uses in-memory caching (30 min TTL) to reduce database load.
     /// </summary>
     private static async Task<IResult> GetOverlays(
         HttpContext context,
         [FromQuery] int mapId,
         [FromQuery] string? coords,
         IOverlayDataRepository overlayRepository,
+        IMemoryCache cache,
         ILogger<Program> logger)
     {
         if (!context.User.Identity?.IsAuthenticated ?? true)
@@ -161,6 +164,23 @@ public static class MapEndpoints
             logger.LogWarning("GetOverlays: Truncated coordinate list to 100 items");
         }
 
+        // Extract tenant ID for cache key
+        var tenantId = context.Items["TenantId"] as string ?? string.Empty;
+
+        // Build cache key from tenant, map, and sorted coordinates
+        // Sort coords to ensure consistent cache keys regardless of request order
+        var sortedCoords = coordList.OrderBy(c => c.X).ThenBy(c => c.Y).ToList();
+        var coordsKey = string.Join(",", sortedCoords.Select(c => $"{c.X}_{c.Y}"));
+        var cacheKey = $"overlays:{tenantId}:{mapId}:{coordsKey}";
+
+        // Try to get from cache first
+        if (cache.TryGetValue(cacheKey, out List<object>? cachedResponse) && cachedResponse != null)
+        {
+            logger.LogDebug("GetOverlays: Cache hit for {CoordCount} coords on map {MapId}", coordList.Count, mapId);
+            return Results.Json(cachedResponse);
+        }
+
+        // Cache miss - fetch from database
         var overlays = await overlayRepository.GetOverlaysForGridsAsync(mapId, coordList);
 
         // Transform to API response format with base64-encoded data
@@ -172,7 +192,18 @@ public static class MapEndpoints
             Type = o.OverlayType,
             Data = Convert.ToBase64String(o.Data),
             UpdatedAt = o.UpdatedAt
-        }).ToList();
+        }).Cast<object>().ToList();
+
+        // Cache for 30 minutes with sliding expiration
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(30))
+            .SetAbsoluteExpiration(TimeSpan.FromHours(2)) // Hard cap at 2 hours
+            .SetSize(response.Count + 1); // Size based on number of overlays
+
+        cache.Set(cacheKey, response, cacheOptions);
+
+        logger.LogDebug("GetOverlays: Cache miss for {CoordCount} coords on map {MapId}, found {OverlayCount} overlays",
+            coordList.Count, mapId, response.Count);
 
         return Results.Json(response);
     }

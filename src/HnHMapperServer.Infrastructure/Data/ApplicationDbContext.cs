@@ -598,6 +598,10 @@ public sealed class ApplicationDbContext : IdentityDbContext<IdentityUser, Ident
             entity.HasIndex(e => e.TenantId);
             entity.HasIndex(e => e.MapId);
 
+            // Covering index for overlay queries - optimized for GetOverlaysForGridsAsync
+            // Covers: TenantId (filter), MapId (filter), CoordX + CoordY (range lookups)
+            entity.HasIndex(e => new { e.TenantId, e.MapId, e.CoordX, e.CoordY });
+
             // Foreign key to Tenants
             entity.HasOne<TenantEntity>()
                 .WithMany()
