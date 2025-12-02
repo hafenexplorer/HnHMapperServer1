@@ -1,0 +1,340 @@
+15:56:37 WRN] Program: SSE: Cancelled - The operation was canceled.
+[15:56:37 WRN] Program: SSE: WatchGridUpdates method exiting
+[15:56:37 WRN] Serilog.AspNetCore.RequestLoggingMiddleware: HTTP GET /api/auth/tenants responded 404 in 9.0517 ms
+[15:56:37 INF] Program: User admin in tenant default-tenant-1 has 5 permissions: Map, Markers, Pointer, Upload, Writer
+[15:56:38 WRN] Serilog.AspNetCore.RequestLoggingMiddleware: HTTP GET /api/auth/tenants responded 404 in 0.3796 ms
+[15:56:38 INF] Program: User admin in tenant default-tenant-1 has 5 permissions: Map, Markers, Pointer, Upload, Writer
+[15:56:42 WRN] Program: SSE: Snapshot JSON length: 2
+[15:56:42 WRN] Program: SSE: About to enter main event loop
+[15:56:42 WRN] Program: SSE: Entering while loop, cancellation requested: False
+[15:56:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:56:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:56:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:56:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:56:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:56:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[15:56:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:56:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[15:56:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:56:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:57:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:57:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:57:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:57:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:57:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:57:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:57:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:57:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:57:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:57:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[15:57:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:57:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[15:57:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:57:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:57:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:57:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:57:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:57:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:57:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:57:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:57:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:57:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:57:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:57:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[15:57:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:57:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[15:57:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:57:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:58:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:58:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:58:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:58:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:58:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:58:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:58:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:58:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:58:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:58:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[15:58:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:58:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[15:58:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:58:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:58:28 WRN] Serilog.AspNetCore.RequestLoggingMiddleware: HTTP GET /api/auth/tenants responded 404 in 6.6010 ms
+[15:58:28 WRN] Serilog.AspNetCore.RequestLoggingMiddleware: HTTP GET /api/auth/tenants responded 404 in 5.9179 ms
+[15:58:29 WRN] Serilog.AspNetCore.RequestLoggingMiddleware: HTTP GET /api/auth/tenants responded 404 in 0.2681 ms
+[15:58:29 WRN] Serilog.AspNetCore.RequestLoggingMiddleware: HTTP GET /api/auth/tenants responded 404 in 0.4129 ms
+[15:58:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:58:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:58:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:58:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:58:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:58:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:58:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:58:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:58:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:58:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[15:58:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:58:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[15:58:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:58:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:59:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:59:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:59:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:59:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:59:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:59:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:59:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:59:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:59:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:59:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[15:59:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:59:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[15:59:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:59:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:59:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:59:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:59:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:59:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:59:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:59:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[15:59:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[15:59:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[15:59:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[15:59:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[15:59:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[15:59:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[15:59:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[15:59:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:00:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:00:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:00:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:00:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:00:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:00:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:00:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:00:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:00:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:00:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[16:00:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:00:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[16:00:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:00:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:00:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:00:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:00:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:00:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:00:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:00:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:00:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:00:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:00:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:00:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:00:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:00:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:00:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:00:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:01:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:01:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:01:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:01:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:01:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:01:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:01:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:01:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:01:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:01:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:01:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:01:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:01:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:01:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:01:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:01:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:01:36 INF] HnHMapperServer.Api.BackgroundServices.ZoomTileRebuildService: Zoom tile rebuild job started
+[16:01:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:01:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:01:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:01:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:02:59 INF] HnHMapperServer.Api.BackgroundServices.MapCleanupService: Map cleanup job started
+[16:02:59 INF] HnHMapperServer.Api.BackgroundServices.MapCleanupService: Map cleanup job completed in 0ms
+[16:04:32 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 175689ms (no expired pings)
+[16:04:32 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 167385ms
+[16:04:32 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 160699ms
+[16:04:32 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 160679ms (no timers processed)
+[16:04:42 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:04:46 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 4458ms
+[16:04:47 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:04:47 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 408ms (no expired pings)
+[16:04:56 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:05:02 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:05:02 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:05:02 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:07:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 138525ms (no expired pings)
+[16:07:21 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 144475ms
+[16:07:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 138970ms
+[16:07:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 138973ms (no timers processed)
+[16:07:31 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:07:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 3308ms
+[16:07:35 INF] HnHMapperServer.Api.BackgroundServices.ZoomTileRebuildService: Zoom tile rebuild job completed in 359611ms (no tiles to rebuild)
+[16:07:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:07:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 2ms (no expired pings)
+[16:07:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:07:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:07:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:07:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:07:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:07:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[16:07:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:07:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:07:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:07:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:08:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:08:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:08:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:08:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:08:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:08:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:08:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:08:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:08:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:08:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[16:08:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:08:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[16:08:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:08:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:08:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:08:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:08:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:08:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:08:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:08:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:08:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:08:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:08:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:08:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:08:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:08:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:08:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:08:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:09:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:09:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:09:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:09:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 0ms (no expired pings)
+[16:09:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:09:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:09:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:09:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:09:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:09:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:09:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:09:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:09:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:09:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:09:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:09:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:09:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:09:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:09:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:09:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:09:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:09:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:09:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:09:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:09:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:09:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 4ms (no timers processed)
+[16:09:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:09:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:10:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:10:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:10:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:10:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 0ms (no expired pings)
+[16:10:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:10:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:10:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:10:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:10:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:10:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:10:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:10:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 4ms (no timers processed)
+[16:10:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:10:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:10:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:10:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:10:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:10:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 0ms (no expired pings)
+[16:10:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:10:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:10:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:10:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:10:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:10:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[16:10:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:10:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[16:10:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:10:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:11:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:11:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:11:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:11:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:11:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:11:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:11:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:11:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:11:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:11:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 1ms
+[16:11:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:11:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 2ms (no timers processed)
+[16:11:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:11:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:11:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:11:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:11:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:11:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:11:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:11:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:11:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:11:51 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:11:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:11:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:11:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:11:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:11:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:11:54 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:12:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:12:04 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:12:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:12:06 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:12:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:12:14 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:12:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:12:21 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 1ms (no expired pings)
+[16:12:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:12:21 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 2ms
+[16:12:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:12:21 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 3ms (no timers processed)
+[16:12:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:12:24 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:12:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:12:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 1ms
+[16:12:35 INF] HnHMapperServer.Api.BackgroundServices.ZoomTileRebuildService: Zoom tile rebuild job started
+[16:12:36 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:12:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:12:51 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:12:51 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:12:59 INF] HnHMapperServer.Api.BackgroundServices.MapCleanupService: Map cleanup job started
+[16:12:59 INF] HnHMapperServer.Api.BackgroundServices.MapCleanupService: Map cleanup job completed in 0ms
+[16:15:34 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 178396ms (no expired pings)
+[16:15:34 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 170071ms
+[16:15:34 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job completed in 163361ms (no timers processed)
+[16:15:34 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job completed in 163384ms
+[16:15:44 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:15:49 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 4510ms
+[16:15:49 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:15:50 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 521ms (no expired pings)
+[16:15:59 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job started
+[16:16:04 INF] HnHMapperServer.Api.BackgroundServices.TimerCheckService: Timer check job started
+[16:16:04 INF] HnHMapperServer.Api.BackgroundServices.MarkerReadinessService: Marker readiness job started
+[16:16:05 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job started
+[16:18:11 WRN] Program: DIAGNOSTIC: Incoming request: POST /client/tobacco-cured-fair-smooth-2013_dcd5c2ca970b72d2a03a540370909fa602152326799e6e4fce83c9255ce69605/gridUpdate from 104.28.232.202
+[16:18:16 WRN] Program: DIAGNOSTIC: Incoming request: POST /client/tobacco-cured-fair-smooth-2013_dcd5c2ca970b72d2a03a540370909fa602152326799e6e4fce83c9255ce69605/positionUpdate from 104.28.232.202
+[16:18:23 INF] HnHMapperServer.Api.BackgroundServices.CharacterCleanupService: Character cleanup job completed in 144891ms
+[16:18:24 INF] HnHMapperServer.Api.BackgroundServices.PingCleanupService: Ping cleanup job completed in 138889ms (no expired pings)

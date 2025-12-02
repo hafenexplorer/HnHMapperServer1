@@ -153,8 +153,29 @@ public class HmapReader
                 }
             }
 
-            // Skip overlays - not needed for minimap rendering
-            // Overlays are only used in 3D rendering, not minimaps
+            // Parse overlays (claims, villages, provinces)
+            // Format: [resource_name (null-terminated), version (uint16), bitpacked_data]...
+            // Terminated by empty string
+            if (ms.Position < ms.Length)
+            {
+                while (ms.Position < ms.Length)
+                {
+                    var resourceName = ReadNullTerminatedString(reader);
+                    if (string.IsNullOrEmpty(resourceName))
+                        break;
+
+                    var resourceVersion = reader.ReadUInt16();
+                    var dataLength = (tileCount + 7) / 8;  // 10000 tiles / 8 = 1250 bytes
+                    var overlayData = reader.ReadBytes(dataLength);
+
+                    grid.Overlays.Add(new HmapOverlayData
+                    {
+                        ResourceName = resourceName,
+                        ResourceVersion = resourceVersion,
+                        Data = overlayData
+                    });
+                }
+            }
         }
 
         return grid;
@@ -268,6 +289,11 @@ public class HmapGridData
     public float[]? ZMap { get; set; }
 
     /// <summary>
+    /// Overlay data (claims, villages, provinces) - bitpacked boolean arrays
+    /// </summary>
+    public List<HmapOverlayData> Overlays { get; set; } = new();
+
+    /// <summary>
     /// Get GridId as string for storage in database
     /// </summary>
     public string GridIdString => GridId.ToString();
@@ -313,4 +339,26 @@ public class HmapSMarker : HmapMarkerData
     public long ObjectId { get; set; }
     public string ResourceName { get; set; } = "";
     public ushort ResourceVersion { get; set; }
+}
+
+/// <summary>
+/// Overlay data from .hmap grid (claims, villages, provinces)
+/// </summary>
+public class HmapOverlayData
+{
+    /// <summary>
+    /// Resource name (e.g., "gfx/tiles/claims/claimfloor")
+    /// </summary>
+    public string ResourceName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Resource version
+    /// </summary>
+    public ushort ResourceVersion { get; set; }
+
+    /// <summary>
+    /// Bitpacked overlay data (1250 bytes for 100x100 grid, LSB first)
+    /// Each bit represents whether the overlay is present at that tile position.
+    /// </summary>
+    public byte[] Data { get; set; } = Array.Empty<byte>();
 }

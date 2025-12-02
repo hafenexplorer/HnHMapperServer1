@@ -315,6 +315,45 @@ namespace HnHMapperServer.Infrastructure.Migrations
                     b.ToTable("CustomMarkers");
                 });
 
+            modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.DirtyZoomTileEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CoordX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CoordY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MapId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Zoom")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MapId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TenantId", "Zoom", "MapId");
+
+                    b.HasIndex("TenantId", "MapId", "CoordX", "CoordY", "Zoom")
+                        .IsUnique();
+
+                    b.ToTable("DirtyZoomTiles");
+                });
+
             modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.GridDataEntity", b =>
                 {
                     b.Property<string>("Id")
@@ -543,6 +582,51 @@ namespace HnHMapperServer.Infrastructure.Migrations
                     b.ToTable("NotificationPreferences");
                 });
 
+            modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.OverlayDataEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CoordX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CoordY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<int>("MapId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("OverlayType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MapId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TenantId", "MapId", "CoordX", "CoordY");
+
+                    b.HasIndex("MapId", "CoordX", "CoordY", "OverlayType", "TenantId")
+                        .IsUnique();
+
+                    b.ToTable("OverlayData");
+                });
+
             modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.PingEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -591,6 +675,55 @@ namespace HnHMapperServer.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ExpiresAt");
 
                     b.ToTable("Pings");
+                });
+
+            modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.RoadEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Hidden")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MapId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Waypoints")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("MapId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("MapId", "CreatedAt")
+                        .HasAnnotation("Sqlite:IndexColumnOrder", new[] { "ASC", "DESC" });
+
+                    b.ToTable("Roads");
                 });
 
             modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.TileDataEntity", b =>
@@ -1103,6 +1236,21 @@ namespace HnHMapperServer.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.DirtyZoomTileEntity", b =>
+                {
+                    b.HasOne("HnHMapperServer.Infrastructure.Data.MapInfoEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HnHMapperServer.Core.Models.TenantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.GridDataEntity", b =>
                 {
                     b.HasOne("HnHMapperServer.Core.Models.TenantEntity", null)
@@ -1153,7 +1301,37 @@ namespace HnHMapperServer.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.OverlayDataEntity", b =>
+                {
+                    b.HasOne("HnHMapperServer.Infrastructure.Data.MapInfoEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HnHMapperServer.Core.Models.TenantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.PingEntity", b =>
+                {
+                    b.HasOne("HnHMapperServer.Infrastructure.Data.MapInfoEntity", null)
+                        .WithMany()
+                        .HasForeignKey("MapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HnHMapperServer.Core.Models.TenantEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HnHMapperServer.Infrastructure.Data.RoadEntity", b =>
                 {
                     b.HasOne("HnHMapperServer.Infrastructure.Data.MapInfoEntity", null)
                         .WithMany()

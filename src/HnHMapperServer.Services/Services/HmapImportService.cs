@@ -137,6 +137,7 @@ public class HmapImportService : IHmapImportService
     private readonly IMapRepository _mapRepository;
     private readonly ITileService _tileService;
     private readonly ITileRepository _tileRepository;
+    private readonly IOverlayDataRepository _overlayRepository;
     private readonly IStorageQuotaService _quotaService;
     private readonly IMapNameService _mapNameService;
     private readonly IMarkerService _markerService;
@@ -158,6 +159,7 @@ public class HmapImportService : IHmapImportService
         IMapRepository mapRepository,
         ITileService tileService,
         ITileRepository tileRepository,
+        IOverlayDataRepository overlayRepository,
         IStorageQuotaService quotaService,
         IMapNameService mapNameService,
         IMarkerService markerService,
@@ -167,6 +169,7 @@ public class HmapImportService : IHmapImportService
         _mapRepository = mapRepository;
         _tileService = tileService;
         _tileRepository = tileRepository;
+        _overlayRepository = overlayRepository;
         _quotaService = quotaService;
         _mapNameService = mapNameService;
         _markerService = markerService;
@@ -699,6 +702,9 @@ public class HmapImportService : IHmapImportService
                 // Delete all tile records for this map
                 await _tileRepository.DeleteTilesByMapAsync(mapId);
 
+                // Delete all overlay records for this map
+                await _overlayRepository.DeleteByMapAsync(mapId);
+
                 // Delete map record
                 await _mapRepository.DeleteMapAsync(mapId);
                 _logger.LogDebug("Deleted map {MapId}", mapId);
@@ -990,6 +996,23 @@ public class HmapImportService : IHmapImportService
                         batchContext.AddStorage(fileSize / (1024.0 * 1024.0));
                         importedGridIds.Add(rendered.GridData.Id);
 
+                        // Add overlays to batch (claims, villages, provinces)
+                        foreach (var overlay in rendered.SourceGrid.Overlays)
+                        {
+                            var overlayType = ParseOverlayType(overlay.ResourceName);
+                            if (overlayType == null) continue;
+
+                            batchContext.AddOverlay(new OverlayData
+                            {
+                                MapId = mapId,
+                                Coord = rendered.GridData.Coord,
+                                OverlayType = overlayType,
+                                Data = overlay.Data,
+                                TenantId = tenantId,
+                                UpdatedAt = DateTime.UtcNow
+                            });
+                        }
+
                         // Report progress
                         processedCount++;
                         var overallProcessed = processedSoFar + gridsSkipped + processedCount;
@@ -1060,7 +1083,7 @@ public class HmapImportService : IHmapImportService
 
     private async Task FlushBatchAsync(BatchImportContext batch)
     {
-        var (grids, tiles, storageMB) = batch.ExtractBatch();
+        var (grids, tiles, overlays, storageMB) = batch.ExtractBatch();
 
         if (grids.Count > 0)
         {
@@ -1074,14 +1097,19 @@ public class HmapImportService : IHmapImportService
             await _tileRepository.SaveTilesBatchAsync(tiles, skipExistenceCheck: false);
         }
 
+        if (overlays.Count > 0)
+        {
+            await _overlayRepository.UpsertBatchAsync(overlays);
+        }
+
         if (storageMB > 0 && grids.Count > 0)
         {
             // Use the first grid's TenantId for quota update
             await _quotaService.IncrementStorageUsageAsync(grids[0].TenantId, storageMB);
         }
 
-        _logger.LogDebug("Flushed batch: {GridCount} grids, {TileCount} tiles, {StorageMB:F2} MB",
-            grids.Count, tiles.Count, storageMB);
+        _logger.LogDebug("Flushed batch: {GridCount} grids, {TileCount} tiles, {OverlayCount} overlays, {StorageMB:F2} MB",
+            grids.Count, tiles.Count, overlays.Count, storageMB);
     }
 
     private async Task<int> CreateNewMapAsync(string tenantId)
@@ -1222,6 +1250,45 @@ public class HmapImportService : IHmapImportService
             (byte)((color.B * f2) / 255),
             color.A
         );
+    }
+
+    /// <summary>
+    /// Converts an overlay resource name from the .hmap file to a normalized overlay type.
+    /// Actual .hmap format: "gfx/tiles/overlay/cplot-f" -> "ClaimFloor"
+    /// </summary>
+    private static string? ParseOverlayType(string resourceName)
+    {
+        // Extract the last segments of the resource path
+        // Format: gfx/tiles/overlay/TYPE or gfx/tiles/overlay/prov/N
+        var parts = resourceName.Split('/');
+        if (parts.Length < 2) return null;
+
+        var lastPart = parts[^1].ToLowerInvariant();
+
+        // Check for province overlays (format: gfx/tiles/overlay/prov/0-4)
+        if (parts.Length >= 2 && parts[^2].ToLowerInvariant() == "prov")
+        {
+            return lastPart switch
+            {
+                "0" => "Province0",
+                "1" => "Province1",
+                "2" => "Province2",
+                "3" => "Province3",
+                "4" => "Province4",
+                _ => null
+            };
+        }
+
+        // Other overlay types
+        return lastPart switch
+        {
+            "cplot-f" => "ClaimFloor",      // Claim plot floor
+            "cplot-o" => "ClaimOutline",    // Claim plot outline
+            "vlg-f" => "VillageFloor",      // Village floor
+            "vlg-o" => "VillageOutline",    // Village outline
+            "vlg-sar" => "VillageSAR",      // Village Safe Area Radius
+            _ => null
+        };
     }
 
     private async Task GenerateZoomLevelsForMapAsync(

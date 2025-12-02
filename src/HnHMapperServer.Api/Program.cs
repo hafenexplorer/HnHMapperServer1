@@ -33,10 +33,9 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Limits.MinResponseDataRate = null;
 
     // Global connection limits to prevent server overload
-    // 50 users × 8 browser connections = 400 base + 100 buffer for SSE/API = 500
-    // Setting to 1500 as safety net with generous headroom
-    serverOptions.Limits.MaxConcurrentConnections = 1500;           // Total HTTP connections
-    serverOptions.Limits.MaxConcurrentUpgradedConnections = 100;   // WebSocket/SSE connections
+    // Production: generous limits, rely on rate limiting for abuse prevention
+    serverOptions.Limits.MaxConcurrentConnections = 10000;          // Total HTTP connections
+    serverOptions.Limits.MaxConcurrentUpgradedConnections = 500;    // WebSocket/SSE connections
 
     // Allow large file uploads for .hmap import (up to 1GB)
     serverOptions.Limits.MaxRequestBodySize = 1024 * 1024 * 1024;  // 1GB
@@ -110,9 +109,11 @@ builder.Services.AddScoped<ITileRepository, TileRepository>();
 builder.Services.AddScoped<IMapRepository, MapRepository>();
 builder.Services.AddScoped<IConfigRepository, ConfigRepository>();
 builder.Services.AddScoped<ICustomMarkerRepository, CustomMarkerRepository>();
+builder.Services.AddScoped<IRoadRepository, RoadRepository>();
 builder.Services.AddScoped<IPingRepository, PingRepository>();
 builder.Services.AddScoped<ITenantRepository, TenantRepository>();
 builder.Services.AddScoped<ITenantInvitationRepository, TenantInvitationRepository>();
+builder.Services.AddScoped<IOverlayDataRepository, OverlayDataRepository>();
 
 // Register services
 // UpdateNotificationService must be registered before CharacterService (dependency)
@@ -124,6 +125,7 @@ builder.Services.AddScoped<ITileService, TileService>();
 builder.Services.AddScoped<IGridService, GridService>();
 builder.Services.AddScoped<IMarkerService, MarkerService>();
 builder.Services.AddScoped<ICustomMarkerService, CustomMarkerService>();
+builder.Services.AddScoped<IRoadService, RoadService>();
 builder.Services.AddScoped<IPingService, PingService>();
 builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<IInvitationService, InvitationService>();
@@ -475,39 +477,6 @@ builder.Services.AddResponseCompression(options =>
         .Where(mimeType => mimeType != "text/event-stream");
 });
 
-// Configure rate limiting to prevent server overload from excessive concurrent requests
-// Primary use case: Tile endpoint can receive 100+ simultaneous requests per user during map zoom
-builder.Services.AddRateLimiter(options =>
-{
-    // Per-IP concurrency limiter - partition by client IP address
-    // Each IP gets 100 concurrent requests with 200 queued
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-    {
-        // Use client IP as partition key (works through reverse proxy with X-Forwarded-For)
-        var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-
-        return RateLimitPartition.GetConcurrencyLimiter(
-            partitionKey: ipAddress,
-            factory: _ => new ConcurrencyLimiterOptions
-            {
-                PermitLimit = 100,              // 100 concurrent requests per IP
-                QueueLimit = 200,               // Queue up to 200 more per IP
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst
-            });
-    });
-
-    // Rejection response when queue is full (should be rare with generous limits)
-    options.OnRejected = async (context, cancellationToken) =>
-    {
-        context.HttpContext.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
-        context.HttpContext.Response.Headers["Retry-After"] = "2";
-
-        await context.HttpContext.Response.WriteAsync(
-            "Server is temporarily overloaded. Please retry in 2 seconds.",
-            cancellationToken);
-    };
-});
-
 var app = builder.Build();
 
 // Ensure grid storage directory exists BEFORE database creation
@@ -744,6 +713,7 @@ app.MapIdentityEndpoints();
 app.MapClientEndpoints();
 app.MapMapEndpoints();
 app.MapCustomMarkerEndpoints();
+app.MapRoadEndpoints();
 app.MapPingEndpoints();
 app.MapNotificationEndpoints(); // Notification system endpoints
 app.MapTimerEndpoints(); // Timer system endpoints

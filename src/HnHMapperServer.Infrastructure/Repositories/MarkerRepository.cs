@@ -73,64 +73,37 @@ public class MarkerRepository : IMarkerRepository
         // The UNIQUE constraint is on (Key, TenantId), so each tenant can have their own markers
         var currentTenantId = _tenantContext.GetRequiredTenantId();
 
-        // Check if marker exists for current tenant (uses global query filter automatically)
-        var existing = await _context.Markers
-            .FirstOrDefaultAsync(m => m.Key == key && m.TenantId == currentTenantId);
+        // Use SQLite's native upsert - atomic, no race condition, no error logging
+        // ON CONFLICT DO UPDATE handles duplicates at the database level
+        var sql = @"
+            INSERT INTO Markers (Key, TenantId, Name, GridId, PositionX, PositionY, Image, Hidden, MaxReady, MinReady, Ready)
+            VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10})
+            ON CONFLICT(Key, TenantId) DO UPDATE SET
+                Name = excluded.Name,
+                GridId = excluded.GridId,
+                PositionX = excluded.PositionX,
+                PositionY = excluded.PositionY,
+                Image = excluded.Image,
+                Hidden = excluded.Hidden,
+                MaxReady = excluded.MaxReady,
+                MinReady = excluded.MinReady,
+                Ready = excluded.Ready";
 
-        if (existing != null)
+        await _context.Database.ExecuteSqlRawAsync(sql,
+            key, currentTenantId, marker.Name, marker.GridId,
+            marker.Position.X, marker.Position.Y, marker.Image,
+            marker.Hidden, marker.MaxReady, marker.MinReady, marker.Ready);
+
+        // If the marker needs its ID set, query it back
+        if (marker.Id == 0)
         {
-            // Update existing marker for this tenant
-            var entity = MapFromDomain(marker, key);
-            entity.Id = existing.Id;
-            _context.Entry(existing).CurrentValues.SetValues(entity);
-            await _context.SaveChangesAsync();
+            var entity = await _context.Markers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Key == key && m.TenantId == currentTenantId);
 
-            // Update the domain object with the ID
-            if (marker.Id == 0)
+            if (entity != null)
             {
                 marker.Id = entity.Id;
-            }
-        }
-        else
-        {
-            // Insert new marker for this tenant
-            var entity = MapFromDomain(marker, key);
-            entity.Id = 0;  // Let database auto-generate ID (AUTOINCREMENT)
-            _context.Markers.Add(entity);
-
-            try
-            {
-                await _context.SaveChangesAsync();
-
-                // Update the domain object with the generated ID
-                if (marker.Id == 0)
-                {
-                    marker.Id = entity.Id;
-                }
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
-            {
-                // Race condition: another request inserted this marker between our check and insert
-                // Detach the failed entity and retry as update
-                _context.Entry(entity).State = EntityState.Detached;
-
-                // Re-fetch the existing marker that was inserted by the other request
-                existing = await _context.Markers
-                    .FirstOrDefaultAsync(m => m.Key == key && m.TenantId == currentTenantId);
-
-                if (existing != null)
-                {
-                    // Update the existing marker
-                    var updateEntity = MapFromDomain(marker, key);
-                    updateEntity.Id = existing.Id;
-                    _context.Entry(existing).CurrentValues.SetValues(updateEntity);
-                    await _context.SaveChangesAsync();
-
-                    if (marker.Id == 0)
-                    {
-                        marker.Id = updateEntity.Id;
-                    }
-                }
             }
         }
     }
@@ -258,6 +231,54 @@ public class MarkerRepository : IMarkerRepository
         }
 
         return newMarkers.Count;
+    }
+
+    public async Task<List<Marker>> GetMarkersByTenantAsync(string tenantId)
+    {
+        // Explicit tenant filtering - bypasses global query filter for background services
+        var entities = await _context.Markers
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(m => m.TenantId == tenantId)
+            .ToListAsync();
+
+        return entities.Select(MapToDomain).ToList();
+    }
+
+    public async Task<int> BatchUpdateReadinessAsync(List<(int markerId, bool ready, long maxReady, long minReady)> updates, string tenantId)
+    {
+        if (updates.Count == 0)
+            return 0;
+
+        var markerIds = updates.Select(u => u.markerId).ToList();
+
+        // Fetch all markers to update in one query
+        var markers = await _context.Markers
+            .IgnoreQueryFilters()
+            .Where(m => m.TenantId == tenantId && markerIds.Contains(m.Id))
+            .ToListAsync();
+
+        if (markers.Count == 0)
+            return 0;
+
+        // Create a lookup for the updates
+        var updateLookup = updates.ToDictionary(u => u.markerId, u => u);
+
+        // Apply updates
+        foreach (var marker in markers)
+        {
+            if (updateLookup.TryGetValue(marker.Id, out var update))
+            {
+                marker.Ready = update.ready;
+                marker.MaxReady = update.maxReady;
+                marker.MinReady = update.minReady;
+            }
+        }
+
+        // Single SaveChanges for all updates
+        await _context.SaveChangesAsync();
+
+        return markers.Count;
     }
 
     private static Marker MapToDomain(MarkerEntity entity) => new Marker
