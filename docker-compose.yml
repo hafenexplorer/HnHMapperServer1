@@ -180,7 +180,9 @@ services:
   # ============================================================================
   watchtower:
     # Official Watchtower image for automatic Docker updates
-    image: containrrr/watchtower
+     image: containrrr/watchtower:latest
+    # or another up-to-date tag suggested by Watchtower docs
+
     
     container_name: hnhm-watchtower
     
