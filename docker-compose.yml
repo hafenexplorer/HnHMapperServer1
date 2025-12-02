@@ -26,7 +26,7 @@ services:
   api:
     # Pull image from GitHub Container Registry
     # Replace OWNER with your GitHub username or organization
-    image: ghcr.io/OWNER/hnhmapper-api:main
+    image: ghcr.io/hafenexplorer/hnhmapper-api:main
     
     # Build configuration (used when building locally instead of pulling from registry)
     # Uncomment 'build' section and comment out 'image' to build locally
@@ -100,7 +100,7 @@ services:
   web:
     # Pull image from GitHub Container Registry
     # Replace OWNER with your GitHub username or organization
-    image: ghcr.io/OWNER/hnhmapper-web:main
+    image: ghcr.io/hafenexplorer/hnhmapper-web:main
     
     # Build configuration (used when building locally instead of pulling from registry)
     # Uncomment 'build' section and comment out 'image' to build locally
